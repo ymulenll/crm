@@ -1,12 +1,31 @@
 import React from 'react';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
 
-const Contacts = () => {
+const Contacts = ({ data: { loading, error, contacts } }) => {
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+  if (error) {
+    return <p>{error.message}</p>;
+  }
   return (
     <ul>
-      <li>Hello apollo</li>
-      <li sad>Jest</li>
+      {contacts.map(item => (
+        <li key={item.id}>{item.firstName} {item.lastName}</li>
+      ))}
     </ul>
   );
 };
 
-export default Contacts;
+export const contactsListQuery = gql`
+  query ConstactsQuery {
+    contacts {
+      id
+      firstName
+      lastName
+    }
+  }
+`;
+
+export default graphql(contactsListQuery)(Contacts);
